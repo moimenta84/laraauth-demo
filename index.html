@@ -26,6 +26,42 @@
       color: #4F46E5;
       border-bottom: 2px solid #4F46E5;
     }
+    .otp-input {
+      width: 48px;
+      height: 56px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border: 2px solid #d1d5db;
+      border-radius: 0.75rem;
+      outline: none;
+      transition: all 0.15s;
+      caret-color: #4F46E5;
+    }
+    .otp-input:focus {
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+    }
+    .otp-input.filled {
+      border-color: #4F46E5;
+      background: #f5f3ff;
+    }
+    .fade-in {
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .shimmer {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
   </style>
 </head>
 <body class="font-sans antialiased flex min-h-screen">
@@ -40,7 +76,7 @@
       <div class="absolute inset-0 opacity-[0.03]"
            style="background-image: linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
                                     linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
-                  background-size: 48px 48px;"></div>
+                   background-size: 48px 48px;"></div>
     </div>
 
     <div class="relative flex items-center gap-3">
@@ -48,7 +84,7 @@
       <span class="text-white font-bold text-xl tracking-tight">Lara<span class="text-indigo-400">Auth</span></span>
     </div>
 
-    <div class="relative">
+    <div class="relative" id="left-content">
       <h2 class="text-4xl xl:text-5xl font-black text-white leading-tight tracking-tight text-balance">
         Sistema de autenticación<br>
         <span class="text-indigo-400 font-black">premium para Laravel.</span>
@@ -84,6 +120,16 @@
       </div>
     </div>
 
+    <div id="left-authenticated" class="relative hidden">
+      <h2 class="text-4xl xl:text-5xl font-black text-white leading-tight tracking-tight text-balance">
+        Bienvenido de vuelta,<br>
+        <span class="text-indigo-400 font-black" id="left-username">Usuario</span>
+      </h2>
+      <p class="text-gray-400 mt-5 text-lg leading-relaxed max-w-sm">
+        Has iniciado sesión correctamente con el sistema de autenticación LaraAuth.
+      </p>
+    </div>
+
     <p class="relative text-xs text-gray-600">&copy; 2026 LaraAuth</p>
   </div>
 
@@ -95,106 +141,219 @@
       <span class="text-gray-900 font-bold text-lg">Lara<span class="text-indigo-500">Auth</span></span>
     </div>
 
-    <div class="w-full max-w-sm">
+    <div class="w-full max-w-sm" id="auth-container">
+
       <!-- Tabs -->
-      <div class="flex gap-6 mb-6 border-b border-gray-200">
+      <div id="auth-tabs" class="flex gap-6 mb-6 border-b border-gray-200">
         <button onclick="showTab('login')" id="tab-login" class="tab-active pb-3 text-sm font-semibold transition-colors">Iniciar sesión</button>
         <button onclick="showTab('register')" id="tab-register" class="pb-3 text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors">Crear cuenta</button>
       </div>
 
       <!-- Login form -->
-      <div id="form-login" class="card p-8 shadow-premium">
-        <!-- Social login -->
-        <div class="flex gap-3 mb-6">
-          <button disabled class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
-            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Google
-          </button>
-          <button disabled class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
-            <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            Facebook
-          </button>
-        </div>
-
-        <!-- Divider -->
-        <div class="flex items-center gap-3 mb-6">
-          <div class="flex-1 border-t border-gray-200"></div>
-          <span class="text-xs text-gray-400 uppercase">o con email</span>
-          <div class="flex-1 border-t border-gray-200"></div>
-        </div>
-
+      <div id="form-login" class="card p-8 shadow-premium fade-in">
         <div class="mb-4">
           <label class="block font-medium text-sm text-gray-700">Email</label>
-          <input type="email" placeholder="tu@email.com" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm" value="demo@laraauth.dev" disabled>
+          <input id="login-email" type="email" placeholder="tu@email.com" value="demo@laraauth.dev" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
         </div>
         <div class="mb-6">
           <label class="block font-medium text-sm text-gray-700">Contraseña</label>
-          <input type="password" placeholder="••••••••" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm" value="••••••••" disabled>
+          <input id="login-password" type="password" placeholder="••••••••" value="12345678" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
         </div>
         <div class="flex items-center justify-between mb-6">
           <label class="inline-flex items-center">
-            <input type="checkbox" checked disabled class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+            <input type="checkbox" checked class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
             <span class="ms-2 text-sm text-gray-600">Recordar</span>
           </label>
-          <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500">¿Olvidaste tu contraseña?</a>
+          <a href="#" onclick="showForgot()" class="text-sm text-indigo-600 hover:text-indigo-500">¿Olvidaste tu contraseña?</a>
         </div>
-        <button disabled class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+        <button onclick="handleLogin()" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
           Entrar
         </button>
-      </div>
 
-      <!-- Register form -->
-      <div id="form-register" class="card p-8 shadow-premium hidden">
-        <!-- Social login -->
-        <div class="flex gap-3 mb-6">
-          <button disabled class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 border-t border-gray-200"></div>
+          <span class="text-xs text-gray-400 uppercase">o continúa con</span>
+          <div class="flex-1 border-t border-gray-200"></div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="socialSuccess('google')" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
             <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
             Google
           </button>
-          <button disabled class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
+          <button onclick="socialSuccess('facebook')" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
             <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             Facebook
           </button>
         </div>
+      </div>
 
-        <!-- Divider -->
-        <div class="flex items-center gap-3 mb-6">
-          <div class="flex-1 border-t border-gray-200"></div>
-          <span class="text-xs text-gray-400 uppercase">o con email</span>
-          <div class="flex-1 border-t border-gray-200"></div>
-        </div>
-
+      <!-- Register form -->
+      <div id="form-register" class="card p-8 shadow-premium hidden fade-in">
         <div class="mb-4">
           <label class="block font-medium text-sm text-gray-700">Nombre</label>
-          <input type="text" placeholder="Tu nombre" disabled class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 border text-sm bg-gray-100">
+          <input id="reg-name" type="text" placeholder="Tu nombre" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
         </div>
         <div class="mb-4">
           <label class="block font-medium text-sm text-gray-700">Email</label>
-          <input type="email" placeholder="tu@email.com" disabled class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 border text-sm bg-gray-100">
+          <input id="reg-email" type="email" placeholder="tu@email.com" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
         </div>
         <div class="mb-4">
           <label class="block font-medium text-sm text-gray-700">Teléfono</label>
-          <input type="text" placeholder="+34 600 000 000" disabled class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 border text-sm bg-gray-100">
+          <div class="flex gap-2 mt-1">
+            <select id="reg-country" class="w-28 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-2 py-2 border text-sm bg-white">
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+51">🇵🇪 +51</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+            </select>
+            <input id="reg-phone" type="text" placeholder="600 000 000" class="flex-1 block border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Te enviaremos un código SMS para verificar</p>
         </div>
         <div class="mb-4">
           <label class="block font-medium text-sm text-gray-700">Contraseña</label>
-          <input type="password" placeholder="••••••••" disabled class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 border text-sm bg-gray-100">
-          <!-- Password strength indicator -->
-          <div class="mt-2 flex gap-1">
-            <div class="h-1 flex-1 rounded-full bg-red-400"></div>
-            <div class="h-1 flex-1 rounded-full bg-red-400"></div>
+          <input id="reg-password" type="password" placeholder="••••••••" oninput="updateStrength(this.value)" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
+          <div class="mt-2 flex gap-1" id="strength-bar">
+            <div class="h-1 flex-1 rounded-full bg-gray-200"></div>
+            <div class="h-1 flex-1 rounded-full bg-gray-200"></div>
             <div class="h-1 flex-1 rounded-full bg-gray-200"></div>
             <div class="h-1 flex-1 rounded-full bg-gray-200"></div>
           </div>
-          <p class="text-xs text-gray-400 mt-1">Mín. 8 caracteres, mayúscula, número y símbolo</p>
+          <p class="text-xs text-gray-400 mt-1" id="strength-text">Mín. 8 caracteres, mayúscula, número y símbolo</p>
         </div>
         <div class="mb-6">
           <label class="block font-medium text-sm text-gray-700">Confirmar contraseña</label>
-          <input type="password" placeholder="••••••••" disabled class="mt-1 block w-full border-gray-300 rounded-md shadow-sm px-3 py-2 border text-sm bg-gray-100">
+          <input id="reg-password-confirm" type="password" placeholder="••••••••" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
         </div>
-        <button disabled class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest opacity-60">
+        <button onclick="handleRegister()" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
           Crear cuenta
         </button>
+
+        <div class="flex items-center gap-3 my-6">
+          <div class="flex-1 border-t border-gray-200"></div>
+          <span class="text-xs text-gray-400 uppercase">o regístrate con</span>
+          <div class="flex-1 border-t border-gray-200"></div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="socialSuccess('google')" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
+            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button onclick="socialSuccess('facebook')" class="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white">
+            <svg class="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+      </div>
+
+      <!-- OTP screen -->
+      <div id="form-otp" class="card p-8 shadow-premium hidden fade-in">
+        <div class="text-center mb-6">
+          <div id="otp-icon" class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 id="otp-heading" class="text-lg font-bold text-gray-900">Verificación SMS</h3>
+          <p id="otp-desc" class="text-sm text-gray-500 mt-1">Hemos enviado un código de 6 dígitos al <strong id="otp-phone" class="text-gray-700">+34 600 000 000</strong></p>
+        </div>
+
+        <!-- SMS notification toast -->
+        <div id="sms-toast" class="hidden mb-4 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-sm fade-in">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-indigo-900">SMS recibido</p>
+              <p class="text-indigo-600 text-xs mt-0.5">Tu código de verificación es <strong id="sms-code-display" class="tracking-widest text-base">000000</strong></p>
+            </div>
+            <button onclick="autoFillOtp()" class="shrink-0 px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded-md hover:bg-indigo-700 transition-colors">
+              Auto-llenar
+            </button>
+          </div>
+        </div>
+
+        <div class="flex justify-center gap-2 mb-4" id="otp-inputs">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autofocus oninput="otpMove(this, event)">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpMove(this, event)">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpMove(this, event)">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpMove(this, event)">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpMove(this, event)">
+          <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" oninput="otpMove(this, event)">
+        </div>
+
+        <div id="otp-error" class="text-center text-sm text-red-500 mb-4 hidden">
+          Código incorrecto. Intenta de nuevo.
+        </div>
+
+        <button onclick="verifyOtp()" id="otp-btn" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition ease-in-out duration-150">
+          Verificar código
+        </button>
+
+        <p class="text-center text-xs text-gray-400 mt-4">
+          ¿No recibiste el código?
+          <button onclick="resendOtp()" class="text-indigo-600 hover:text-indigo-500 font-medium">Reenviar SMS</button>
+        </p>
+
+        <button onclick="backToRegister()" class="w-full mt-3 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+          &larr; Volver al registro
+        </button>
+      </div>
+
+      <!-- Forgot password -->
+      <div id="form-forgot" class="card p-8 shadow-premium hidden fade-in">
+        <div class="text-center mb-6">
+          <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900">Restablecer contraseña</h3>
+          <p class="text-sm text-gray-500 mt-1">Introduce tu email y te enviaremos un enlace</p>
+        </div>
+        <div class="mb-6">
+          <label class="block font-medium text-sm text-gray-700">Email</label>
+          <input id="forgot-email" type="email" placeholder="tu@email.com" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm">
+        </div>
+        <button onclick="sendReset()" class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 transition ease-in-out duration-150">
+          Enviar enlace
+        </button>
+        <button onclick="backToLogin()" class="w-full mt-3 text-sm text-gray-500 hover:text-gray-700 transition-colors">
+          &larr; Volver a iniciar sesión
+        </button>
+      </div>
+
+      <!-- Authenticated state -->
+      <div id="form-authenticated" class="card p-8 shadow-premium hidden fade-in">
+        <div class="text-center">
+          <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <span class="text-white text-3xl font-bold" id="auth-avatar">I</span>
+          </div>
+          <h3 class="text-xl font-bold text-gray-900" id="auth-name">Iker Martínez</h3>
+          <p class="text-sm text-gray-500 mt-1" id="auth-email-display">iker@example.com</p>
+
+          <div class="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500">
+            <span id="auth-method-badge" class="inline-flex items-center gap-1 px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+              <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+              Email
+            </span>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 mt-6 pt-6">
+          <button onclick="handleLogout()" class="w-full inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 transition ease-in-out duration-150">
+            Cerrar sesión
+          </button>
+        </div>
       </div>
 
       <p class="text-center text-xs text-gray-400 mt-6">&copy; 2026 LaraAuth · Starter Kit</p>
@@ -202,13 +361,252 @@
   </div>
 
   <script>
+    let userName = '';
+    let userEmail = '';
+    let userPhone = '';
+    let otpCode = '';
+    let otpFlow = ''; // 'register' | 'social'
+
     function showTab(tab) {
       document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
       document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('form-otp').classList.add('hidden');
+      document.getElementById('form-forgot').classList.add('hidden');
       document.getElementById('tab-login').classList.toggle('tab-active', tab === 'login');
       document.getElementById('tab-login').classList.toggle('text-gray-400', tab !== 'login');
       document.getElementById('tab-register').classList.toggle('tab-active', tab === 'register');
       document.getElementById('tab-register').classList.toggle('text-gray-400', tab !== 'register');
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+      if (!email || !pass) {
+        alert('Completa todos los campos');
+        return;
+      }
+      userName = email.split('@')[0];
+      userEmail = email;
+      showAuthenticated('email');
+    }
+
+    function socialSuccess(provider) {
+      userName = 'Usuario';
+      userEmail = 'usuario@gmail.com';
+      userPhone = '+34 612 345 678';
+      otpFlow = 'social';
+
+      document.getElementById('otp-heading').textContent = provider === 'google' ? 'Google' : 'Facebook';
+      document.getElementById('otp-desc').innerHTML = 'Hemos enviado un código de 6 dígitos al <strong class="text-gray-700">' + userPhone + '</strong>';
+      document.getElementById('otp-icon').innerHTML = provider === 'google'
+        ? '<svg class="w-7 h-7 text-indigo-600" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>'
+        : '<svg class="w-7 h-7 text-indigo-600" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
+
+      document.getElementById('form-login').classList.add('hidden');
+      document.getElementById('form-register').classList.add('hidden');
+      document.getElementById('form-otp').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.add('hidden');
+      document.getElementById('otp-phone').textContent = userPhone;
+
+      otpCode = String(Math.floor(100000 + Math.random() * 900000));
+      document.getElementById('sms-code-display').textContent = otpCode;
+      document.getElementById('sms-toast').classList.remove('hidden');
+      setTimeout(() => document.getElementById('sms-toast').classList.add('hidden'), 8000);
+
+      const inputs = document.querySelectorAll('#otp-inputs input');
+      inputs.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
+      inputs[0].focus();
+      document.getElementById('otp-error').classList.add('hidden');
+    }
+
+    function handleRegister() {
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const country = document.getElementById('reg-country').value;
+      const phone = document.getElementById('reg-phone').value.trim();
+      const pass = document.getElementById('reg-password').value;
+      const pass2 = document.getElementById('reg-password-confirm').value;
+
+      if (!name || !email || !phone || !pass) {
+        alert('Completa todos los campos');
+        return;
+      }
+      if (pass !== pass2) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
+      userName = name;
+      userEmail = email;
+      userPhone = country + ' ' + phone;
+      otpFlow = 'register';
+
+      document.getElementById('otp-heading').textContent = 'Verificación SMS';
+      document.getElementById('otp-desc').innerHTML = 'Hemos enviado un código de 6 dígitos al <strong class="text-gray-700">' + userPhone + '</strong>';
+      document.getElementById('otp-icon').innerHTML = '<svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>';
+
+      document.getElementById('otp-phone').textContent = userPhone;
+      document.getElementById('form-register').classList.add('hidden');
+      document.getElementById('form-otp').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.add('hidden');
+
+      otpCode = String(Math.floor(100000 + Math.random() * 900000));
+      document.getElementById('sms-code-display').textContent = otpCode;
+
+      const toast = document.getElementById('sms-toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 8000);
+
+      const inputs = document.querySelectorAll('#otp-inputs input');
+      inputs.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
+      inputs[0].focus();
+      document.getElementById('otp-error').classList.add('hidden');
+    }
+
+    function otpMove(el, e) {
+      el.value = el.value.replace(/\D/g, '');
+      el.classList.toggle('filled', el.value !== '');
+
+      if (el.value && el.nextElementSibling) {
+        el.nextElementSibling.focus();
+      }
+
+      if (e.inputType === 'deleteContentBackward' && !el.value && el.previousElementSibling) {
+        el.previousElementSibling.focus();
+        el.previousElementSibling.classList.remove('filled');
+      }
+
+      const values = Array.from(document.querySelectorAll('#otp-inputs input')).map(i => i.value).join('');
+      if (values.length === 6) {
+        document.getElementById('otp-btn').focus();
+      }
+    }
+
+    function autoFillOtp() {
+      const digits = otpCode.split('');
+      const inputs = document.querySelectorAll('#otp-inputs input');
+      inputs.forEach((inp, i) => {
+        inp.value = digits[i] || '';
+        inp.classList.toggle('filled', !!digits[i]);
+      });
+      document.getElementById('otp-btn').focus();
+    }
+
+    function verifyOtp() {
+      const values = Array.from(document.querySelectorAll('#otp-inputs input')).map(i => i.value).join('');
+      document.getElementById('otp-error').classList.add('hidden');
+
+      if (values.length !== 6) {
+        document.getElementById('otp-error').textContent = 'Introduce el código completo de 6 dígitos';
+        document.getElementById('otp-error').classList.remove('hidden');
+        return;
+      }
+
+      if (values !== otpCode) {
+        document.getElementById('otp-error').textContent = 'Código incorrecto. Intenta de nuevo.';
+        document.getElementById('otp-error').classList.remove('hidden');
+        const inputs = document.querySelectorAll('#otp-inputs input');
+        inputs.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
+        inputs[0].focus();
+        return;
+      }
+
+      if (otpFlow === 'social') {
+        showAuthenticated('social');
+      } else {
+        showAuthenticated('sms');
+      }
+    }
+
+    function resendOtp() {
+      otpCode = String(Math.floor(100000 + Math.random() * 900000));
+      document.getElementById('sms-code-display').textContent = otpCode;
+      const toast = document.getElementById('sms-toast');
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 8000);
+
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Enviado';
+      setTimeout(() => { btn.disabled = false; btn.textContent = 'Reenviar SMS'; }, 3000);
+    }
+
+    function backToRegister() {
+      document.getElementById('form-otp').classList.add('hidden');
+      document.getElementById('form-register').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.remove('hidden');
+    }
+
+    function backToLogin() {
+      document.getElementById('form-forgot').classList.add('hidden');
+      document.getElementById('form-login').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.remove('hidden');
+    }
+
+    function showForgot() {
+      document.getElementById('form-login').classList.add('hidden');
+      document.getElementById('form-forgot').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.add('hidden');
+    }
+
+    function sendReset() {
+      const email = document.getElementById('forgot-email').value;
+      if (!email) { alert('Introduce tu email'); return; }
+      alert('Enlace de restablecimiento enviado a ' + email + ' (demo)');
+      backToLogin();
+    }
+
+    function showAuthenticated(method) {
+      document.getElementById('form-login').classList.add('hidden');
+      document.getElementById('form-register').classList.add('hidden');
+      document.getElementById('form-otp').classList.add('hidden');
+      document.getElementById('form-forgot').classList.add('hidden');
+      document.getElementById('form-authenticated').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.add('hidden');
+
+      document.getElementById('auth-name').textContent = userName;
+      document.getElementById('auth-email-display').textContent = userEmail;
+      document.getElementById('auth-avatar').textContent = userName.charAt(0).toUpperCase();
+      document.getElementById('left-content').classList.add('hidden');
+      document.getElementById('left-authenticated').classList.remove('hidden');
+      document.getElementById('left-username').textContent = userName;
+
+      const badges = { email: 'Email', social: 'Google / Facebook', sms: 'SMS + OTP' };
+      document.getElementById('auth-method-badge').innerHTML =
+        `<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> ${badges[method] || 'Email'}`;
+    }
+
+    function handleLogout() {
+      userName = '';
+      userEmail = '';
+      userPhone = '';
+
+      document.getElementById('form-authenticated').classList.add('hidden');
+      document.getElementById('form-login').classList.remove('hidden');
+      document.getElementById('auth-tabs').classList.remove('hidden');
+      document.getElementById('left-content').classList.remove('hidden');
+      document.getElementById('left-authenticated').classList.add('hidden');
+
+      document.getElementById('login-email').value = 'demo@laraauth.dev';
+      document.getElementById('login-password').value = '12345678';
+    }
+
+    function updateStrength(val) {
+      const bar = document.getElementById('strength-bar');
+      const text = document.getElementById('strength-text');
+      const bars = bar.querySelectorAll('div');
+      let level = 0;
+      if (val.length >= 8) level++;
+      if (/[A-Z]/.test(val)) level++;
+      if (/[0-9]/.test(val)) level++;
+      if (/[^A-Za-z0-9]/.test(val)) level++;
+
+      const colors = ['bg-gray-200', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'];
+      const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
+      bars.forEach((b, i) => {
+        b.className = 'h-1 flex-1 rounded-full ' + (i < level ? colors[level] : 'bg-gray-200');
+      });
+      text.textContent = level ? labels[level] : 'Mín. 8 caracteres, mayúscula, número y símbolo';
     }
   </script>
 </body>
