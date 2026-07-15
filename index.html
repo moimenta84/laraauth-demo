@@ -309,6 +309,44 @@
         </button>
       </div>
 
+      <!-- Registration confirmation -->
+      <div id="form-confirmation" class="card p-8 shadow-premium hidden fade-in">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900" id="conf-title">¡Registro completado!</h3>
+          <p class="text-sm text-gray-500 mt-1" id="conf-desc">Tu cuenta ha sido creada correctamente.</p>
+
+          <div class="mt-6 bg-gray-50 rounded-xl p-4 text-left space-y-3">
+            <div class="flex items-center gap-3 text-sm">
+              <svg class="h-4 w-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              <span class="text-gray-600" id="conf-name">Usuario</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <svg class="h-4 w-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-gray-600" id="conf-email">usuario@email.com</span>
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+              <svg class="h-4 w-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <span class="text-gray-600" id="conf-method">Verificado con SMS</span>
+            </div>
+          </div>
+
+          <button onclick="goToDashboard()" class="mt-6 w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            Ir al panel
+          </button>
+        </div>
+      </div>
+
       <!-- Forgot password -->
       <div id="form-forgot" class="card p-8 shadow-premium hidden fade-in">
         <div class="text-center mb-6">
@@ -511,11 +549,7 @@
         return;
       }
 
-      if (otpFlow === 'social') {
-        showAuthenticated('social');
-      } else {
-        showAuthenticated('sms');
-      }
+      showConfirmation();
     }
 
     function resendOtp() {
@@ -529,6 +563,28 @@
       btn.disabled = true;
       btn.textContent = 'Enviado';
       setTimeout(() => { btn.disabled = false; btn.textContent = 'Reenviar SMS'; }, 3000);
+    }
+
+    function showConfirmation() {
+      document.getElementById('form-otp').classList.add('hidden');
+      document.getElementById('form-confirmation').classList.remove('hidden');
+      document.getElementById('conf-name').textContent = userName;
+      document.getElementById('conf-email').textContent = userEmail;
+
+      if (otpFlow === 'social') {
+        document.getElementById('conf-title').textContent = 'Inicio de sesión exitoso';
+        document.getElementById('conf-desc').textContent = 'Te has autenticado correctamente con tu cuenta.';
+        document.getElementById('conf-method').textContent = 'Verificado con Google / Facebook';
+      } else {
+        document.getElementById('conf-title').textContent = '¡Registro completado!';
+        document.getElementById('conf-desc').textContent = 'Tu cuenta ha sido creada correctamente.';
+        document.getElementById('conf-method').textContent = 'Verificado con SMS + OTP';
+      }
+    }
+
+    function goToDashboard() {
+      const method = otpFlow === 'social' ? 'social' : 'sms';
+      showAuthenticated(method);
     }
 
     function backToRegister() {
@@ -580,8 +636,10 @@
       userName = '';
       userEmail = '';
       userPhone = '';
+      otpFlow = '';
 
       document.getElementById('form-authenticated').classList.add('hidden');
+      document.getElementById('form-confirmation').classList.add('hidden');
       document.getElementById('form-login').classList.remove('hidden');
       document.getElementById('auth-tabs').classList.remove('hidden');
       document.getElementById('left-content').classList.remove('hidden');
