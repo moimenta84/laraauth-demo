@@ -122,10 +122,10 @@
 
     <div id="left-authenticated" class="relative hidden">
       <h2 class="text-4xl xl:text-5xl font-black text-white leading-tight tracking-tight text-balance">
-        Bienvenido de vuelta,<br>
+        <span id="left-greeting">Bienvenido de vuelta,</span><br>
         <span class="text-indigo-400 font-black" id="left-username">Usuario</span>
       </h2>
-      <p class="text-gray-400 mt-5 text-lg leading-relaxed max-w-sm">
+      <p class="text-gray-400 mt-5 text-lg leading-relaxed max-w-sm" id="left-subtext">
         Has iniciado sesión correctamente con el sistema de autenticación LaraAuth.
       </p>
     </div>
@@ -626,6 +626,17 @@
       document.getElementById('left-content').classList.add('hidden');
       document.getElementById('left-authenticated').classList.remove('hidden');
       document.getElementById('left-username').textContent = userName;
+
+      if (method === 'sms') {
+        document.getElementById('left-greeting').textContent = 'Bienvenido a bordo,';
+        document.getElementById('left-subtext').textContent = 'Tu cuenta se ha creado correctamente con el sistema de autenticación LaraAuth.';
+      } else if (method === 'social') {
+        document.getElementById('left-greeting').textContent = 'Bienvenido,';
+        document.getElementById('left-subtext').textContent = 'Has iniciado sesión correctamente con tu cuenta.';
+      } else {
+        document.getElementById('left-greeting').textContent = 'Bienvenido de vuelta,';
+        document.getElementById('left-subtext').textContent = 'Has iniciado sesión correctamente con el sistema de autenticación LaraAuth.';
+      }
 
       const badges = { email: 'Email', social: 'Google / Facebook', sms: 'SMS + OTP' };
       document.getElementById('auth-method-badge').innerHTML =
