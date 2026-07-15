@@ -445,8 +445,7 @@
       document.getElementById('auth-tabs').classList.add('hidden');
       document.getElementById('otp-phone').textContent = userPhone;
 
-      otpCode = String(Math.floor(100000 + Math.random() * 900000));
-      document.getElementById('sms-code-display').textContent = otpCode;
+      setOtpCode(String(Math.floor(100000 + Math.random() * 900000)));
 
       const inputs = document.querySelectorAll('#otp-inputs input');
       inputs.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
@@ -485,12 +484,11 @@
       document.getElementById('form-otp').classList.remove('hidden');
       document.getElementById('auth-tabs').classList.add('hidden');
 
-      otpCode = String(Math.floor(100000 + Math.random() * 900000));
-      document.getElementById('sms-code-display').textContent = otpCode;
+      setOtpCode(String(Math.floor(100000 + Math.random() * 900000)));
 
-      const inputs = document.querySelectorAll('#otp-inputs input');
-      inputs.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
-      inputs[0].focus();
+      const inputsEls = document.querySelectorAll('#otp-inputs input');
+      inputsEls.forEach(inp => { inp.value = ''; inp.classList.remove('filled'); });
+      inputsEls[0].focus();
       document.getElementById('otp-error').classList.add('hidden');
     }
 
@@ -513,19 +511,31 @@
       }
     }
 
+    function setOtpCode(code) {
+      otpCode = code;
+      const el = document.getElementById('sms-code-display');
+      if (el) el.textContent = code;
+    }
+
+    function getOtpCode() {
+      const el = document.getElementById('sms-code-display');
+      return el ? el.textContent.trim() : otpCode;
+    }
+
     function autoFillOtp() {
-      const digits = otpCode.split('');
+      const code = getOtpCode();
+      const digits = code.split('');
       const inputs = document.querySelectorAll('#otp-inputs input');
       inputs.forEach((inp, i) => {
         inp.value = digits[i] || '';
         inp.classList.toggle('filled', !!digits[i]);
-        inp.dispatchEvent(new Event('input', { bubbles: true }));
       });
       document.getElementById('otp-btn').focus();
     }
 
     function verifyOtp() {
       const values = Array.from(document.querySelectorAll('#otp-inputs input')).map(i => i.value).join('');
+      const expected = getOtpCode();
       document.getElementById('otp-error').classList.add('hidden');
 
       if (values.length !== 6) {
@@ -534,7 +544,7 @@
         return;
       }
 
-      if (values !== otpCode) {
+      if (values !== expected) {
         document.getElementById('otp-error').textContent = 'Código incorrecto. Intenta de nuevo.';
         document.getElementById('otp-error').classList.remove('hidden');
         const inputs = document.querySelectorAll('#otp-inputs input');
@@ -547,8 +557,8 @@
     }
 
     function resendOtp(el) {
-      otpCode = String(Math.floor(100000 + Math.random() * 900000));
-      document.getElementById('sms-code-display').textContent = otpCode;
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      setOtpCode(code);
       el.disabled = true;
       el.textContent = 'Enviado';
       setTimeout(() => { el.disabled = false; el.textContent = 'Reenviar SMS'; }, 3000);
