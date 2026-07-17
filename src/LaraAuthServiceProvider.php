@@ -29,6 +29,10 @@ class LaraAuthServiceProvider extends ServiceProvider
     $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laraauth');
     $this->loadRoutesFrom(__DIR__ . '/../routes/auth.php');
 
+    if (config('laraauth.demo_mode', false) || app()->environment('local')) {
+      $this->loadRoutesFrom(__DIR__ . '/../routes/demo.php');
+    }
+
     $router = $this->app->make(Router::class);
     $router->aliasMiddleware('otp.verified', OTPVerified::class);
   }

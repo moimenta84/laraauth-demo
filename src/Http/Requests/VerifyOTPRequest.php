@@ -17,7 +17,20 @@ class VerifyOTPRequest extends FormRequest
   {
     return [
       'code' => ['required', 'string', 'size:' . config('laraauth.otp.digits', 6)],
+      'digits' => ['nullable', 'array', 'size:' . config('laraauth.otp.digits', 6)],
     ];
+  }
+
+  protected function prepareForValidation(): void
+  {
+    if (!$this->filled('code')) {
+      $digits = $this->input('digits');
+      if (is_array($digits)) {
+        $this->merge([
+          'code' => implode('', $digits),
+        ]);
+      }
+    }
   }
 
   public function ensureIsNotRateLimited(string $identifier): void

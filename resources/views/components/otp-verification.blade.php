@@ -13,7 +13,7 @@
 @stop
 
 @section('auth-content')
-  <div class="card p-8 shadow-premium fade-in">
+  <div class="card p-8 fade-in">
     <div class="text-center mb-6">
       <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,14 +21,14 @@
         </svg>
       </div>
       <h3 class="text-lg font-bold text-gray-900">Verificación SMS</h3>
-      <p class="text-sm text-gray-500 mt-1">
+      <p class="text-sm text-gray-500 mt-1.5">
         Hemos enviado un código de {{ config('laraauth.otp.digits', 6) }} dígitos al
         <strong class="text-gray-700">{{ $phone }}</strong>
       </p>
     </div>
 
     @if ($errors->any())
-      <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+      <div class="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
         {{ $errors->first() }}
       </div>
     @endif
@@ -36,7 +36,7 @@
     <form method="POST" action="{{ route('laraauth.otp.verify') }}" id="otp-form">
       @csrf
 
-      <div class="flex justify-center gap-2 mb-4" id="otp-inputs">
+      <div class="flex justify-center gap-2 mb-6" id="otp-inputs">
         @for ($i = 0; $i < config('laraauth.otp.digits', 6); $i++)
           <input class="otp-input" type="text" name="digits[]" maxlength="1"
                  inputmode="numeric" pattern="[0-9]" {{ $i === 0 ? 'autofocus' : '' }}
@@ -47,21 +47,21 @@
       <input type="hidden" name="code" id="otp-hidden">
 
       <button type="submit" id="otp-btn"
-              class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 transition ease-in-out duration-150">
+              class="w-full inline-flex items-center justify-center px-4 py-[10px] bg-indigo-600 border border-transparent rounded-lg font-bold text-sm text-white hover:bg-indigo-700 active:bg-indigo-800 active:scale-[0.98] focus:outline-none focus:ring-[3px] focus:ring-indigo-600/20 transition-all duration-150">
         Verificar código
       </button>
     </form>
 
-    <p class="text-center text-xs text-gray-400 mt-4">
+    <p class="text-center text-xs text-gray-500 mt-4">
       ¿No recibiste el código?
       <button type="button" onclick="resendOTP(this)" id="resend-btn"
-              class="text-indigo-600 hover:text-indigo-500 font-medium" @if(!$canResend) disabled @endif>
+              class="text-indigo-600 hover:text-indigo-500 font-medium transition-colors" @if(!$canResend) disabled @endif>
         @if ($canResend) Reenviar SMS @else Espera... @endif
       </button>
     </p>
 
     <div class="mt-4 flex justify-center">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-medium">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
         </svg>

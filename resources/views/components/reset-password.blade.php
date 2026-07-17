@@ -13,7 +13,7 @@
 @stop
 
 @section('auth-content')
-  <div class="card p-8 shadow-premium fade-in">
+  <div class="card p-8 fade-in">
     <div class="text-center mb-6">
       <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,11 +21,11 @@
         </svg>
       </div>
       <h3 class="text-lg font-bold text-gray-900">Nueva contraseña</h3>
-      <p class="text-sm text-gray-500 mt-1">Introduce tu nueva contraseña</p>
+      <p class="text-sm text-gray-500 mt-1.5">Introduce tu nueva contraseña</p>
     </div>
 
     @if ($errors->any())
-      <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
+      <div class="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 text-center">
         {{ $errors->first() }}
       </div>
     @endif
@@ -36,21 +36,21 @@
       <input type="hidden" name="email" value="{{ $email }}">
 
       <div class="mb-4">
-        <label class="block font-medium text-sm text-gray-700">Nueva contraseña</label>
+        <label class="block font-medium text-sm text-gray-700 mb-1.5">Nueva contraseña</label>
         <input type="password" name="password" required autofocus
-               class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm"
+               class="block w-full border-gray-200 hover:border-gray-300 focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-500/20 rounded-lg px-3 py-[10px] border text-sm transition-colors"
                placeholder="••••••••">
       </div>
 
       <div class="mb-6">
-        <label class="block font-medium text-sm text-gray-700">Confirmar contraseña</label>
+        <label class="block font-medium text-sm text-gray-700 mb-1.5">Confirmar contraseña</label>
         <input type="password" name="password_confirmation" required
-               class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-sm"
+               class="block w-full border-gray-200 hover:border-gray-300 focus:border-indigo-500 focus:ring-[3px] focus:ring-indigo-500/20 rounded-lg px-3 py-[10px] border text-sm transition-colors"
                placeholder="••••••••">
       </div>
 
       <button type="submit"
-              class="w-full inline-flex items-center justify-center px-4 py-2.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 transition ease-in-out duration-150">
+              class="w-full inline-flex items-center justify-center px-4 py-[10px] bg-gray-800 border border-transparent rounded-lg font-bold text-sm text-white hover:bg-gray-700 active:bg-gray-900 active:scale-[0.98] focus:outline-none focus:ring-[3px] focus:ring-gray-800/20 transition-all duration-150">
         Restablecer contraseña
       </button>
     </form>

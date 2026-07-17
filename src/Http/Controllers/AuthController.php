@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Moimenta84\LaraAuth\Http\Requests\LoginRequest;
 use Moimenta84\LaraAuth\Http\Requests\RegisterRequest;
@@ -199,7 +200,11 @@ class AuthController extends Controller
       return redirect()->route('laraauth.login')->withErrors(['provider' => 'Proveedor no soportado.']);
     }
 
-    return app(SocialAuthService::class)->redirect($provider);
+    try {
+      return app(SocialAuthService::class)->redirect($provider);
+    } catch (\Laravel\Socialite\Exceptions\DriverMissingConfigurationException $e) {
+      return redirect()->route('laraauth.social.demo', $provider);
+    }
   }
 
   public function socialCallback(string $provider)
@@ -255,4 +260,32 @@ class AuthController extends Controller
       ['code' => '+44', 'country' => '🇬🇧', 'name' => 'Reino Unido'],
     ];
   }
+
+  // ─── DEMO ───────────────────────────────────────────────────
+
+  public function demoSocialCallback(string $provider)
+  {
+    $userModel = config('laraauth.user_model');
+    $demo = $userModel::where('email', 'demo@laraauth.dev')->first();
+
+    if (!$demo) {
+      $demo = $userModel::create([
+        'name' => 'Demo',
+        'email' => 'demo@laraauth.dev',
+        'password' => Hash::make('password'),
+        'phone_country_code' => '+34',
+        'phone' => '612 345 678',
+        'phone_verified_at' => null,
+      ]);
+    }
+
+    Auth::login($demo);
+
+    if (config('laraauth.methods.otp')) {
+      return redirect()->route('laraauth.otp.show');
+    }
+
+    return redirect()->intended(config('laraauth.redirect_after_login', '/dashboard'));
+  }
+
 }
