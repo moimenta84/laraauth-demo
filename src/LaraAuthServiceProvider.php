@@ -29,7 +29,7 @@ class LaraAuthServiceProvider extends ServiceProvider
     $this->loadViewsFrom(__DIR__ . '/../resources/views', 'laraauth');
     $this->loadRoutesFrom(__DIR__ . '/../routes/auth.php');
 
-    if (config('laraauth.demo_mode', false) || app()->environment('local')) {
+    if (config('laraauth.demo_mode', false)) {
       $this->loadRoutesFrom(__DIR__ . '/../routes/demo.php');
     }
 

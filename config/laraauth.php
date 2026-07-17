@@ -94,4 +94,11 @@ return [
   */
   'redirect_after_login' => '/dashboard',
   'redirect_after_logout' => '/',
+
+  /*
+  |--------------------------------------------------------------------------
+  | Modo demo (rutas sociales simuladas sin credenciales)
+  |--------------------------------------------------------------------------
+  */
+  'demo_mode' => env('LARAAUTH_DEMO', false),
 ];
